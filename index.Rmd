@@ -1,0 +1,16 @@
+---
+title: "Mari Herbst de Cortina"
+image: "mari.JPG"
+site: distill::distill_website
+links:
+  - label: LinkedIn
+    url: "https://www.linkedin.com/in/marielena-herbst-de-cortina-b6501a147/"
+  - label: GitHub
+    url: "https://github.com/marihdec"
+  - label: Email
+    url: "marielena@bren.ucsb.edu"
+output:
+  postcards::jolla
+---
+ 
+I am a student at UC Santa Barbara's Bren School of Environmental Science & Management pursing a Masters of Environmental Science & Management (MESM). Check out some of my work!
