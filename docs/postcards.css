@@ -15,6 +15,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri');
 @import url('https://fonts.googleapis.com/css2?family=Bitter');
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono');
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque&family=Monoton&display=swap');
 
 html {
   /*-- Main font sizes --*/
@@ -30,10 +31,14 @@ html {
   --aside-color:     rgba(0, 0, 0, 0.6);
   --fig-cap-color:   rgba(0, 0, 0, 0.6);
   /*-- Specify custom fonts ~~~ must be imported above   --*/
-  --heading-font:    "Amiri", serif;
+  --heading-font:    "Monoton", cursive;
   --mono-font:       "DM Mono", monospace;
   --body-font:       "Bitter", sans-serif;
-  --navbar-font:     "Amiri", serif;
+  --navbar-font:     "Darker Grotesque", sans-serif;
+}
+
+body {
+  background-color: pink
 }
 
 /*-- ARTICLE METADATA --*/
@@ -63,10 +68,10 @@ d-appendix {
 
 .distill-site-header {
   --title-size:       18px;    
-  --text-color:       #ff414b; /* edited */
+  --text-color:       white; /* edited */
   --text-size:        15px;
-  --hover-color:      #dd424c; /* edited */
-  --bkgd-color:       #ffd8db; /* edited */
+  --hover-color:      black; /* edited */
+  --bkgd-color:       palevioletred; /* edited */
 }
 
 .distill-site-footer {
