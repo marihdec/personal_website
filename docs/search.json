@@ -6,15 +6,22 @@
       "description": "Some additional details about the website",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2022-01-31T12:36:38-08:00"
+      "last_modified": "2022-02-02T17:30:46-08:00"
+    },
+    {
+      "path": "blog.html",
+      "title": "Blog",
+      "author": [],
+      "contents": "\n\n\n\n\n\n\n\n\n244 Term Project\n\n\nHome\nAbout\nBlog\n☰\n\n\n  \n    \n      \n        \n        \n        \n      \n      \n    \n    \n      \n  Home\n\n\n  About\n\n\n  Blog\n\n      \n  \n\n\n\n\n\n\nBlog\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// add bootstrap table styles to pandoc tables\nfunction bootstrapStylePandocTables() {\n  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');\n}\n$(document).ready(function () {\n  bootstrapStylePandocTables();\n});\n\n\n\n$(document).ready(function () {\n  window.buildTabsets(\"TOC\");\n});\n\n$(document).ready(function () {\n  $('.tabset-dropdown > .nav-tabs > li').click(function () {\n    $(this).parent().toggleClass('nav-tabs-open');\n  });\n});\n\n  (function () {\n    var script = document.createElement(\"script\");\n    script.type = \"text/javascript\";\n    script.src  = \"https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\";\n    document.getElementsByTagName(\"head\")[0].appendChild(script);\n  })();\n",
+      "last_modified": "2022-02-02T17:30:46-08:00"
     },
     {
       "path": "index.html",
       "title": "Mari Herbst de Cortina",
       "author": [],
-      "contents": "\n\n          \n          \n          244 Term Project\n          \n          \n          Home\n          About\n          ☰\n          \n          \n      \n        \n          \n            Mari Herbst de Cortina\n          \n          \n            \n              I am a student at UC Santa Barbara’s Bren School of Environmental Science & Management pursing a Masters of Environmental Science & Management (MESM). Check out some of my work!\n            \n            \n              I am a student at UC Santa Barbara’s Bren School of Environmental Science & Management pursing a Masters of Environmental Science & Management (MESM). Check out some of my work!\n            \n          \n\n          \n            \n              \n                  \n                    \n                      LinkedIn\n                    \n                  \n                \n                                \n                  \n                    \n                      GitHub\n                    \n                  \n                \n                                \n                  \n                    \n                      Email\n                    \n                  \n                \n                              \n          \n\n          \n            \n              \n                                \n                  \n                    LinkedIn\n                  \n                \n                                \n                  \n                    GitHub\n                  \n                \n                                \n                  \n                    Email\n                  \n                \n                              \n            \n          \n        \n      \n    \n\n    \n    \n    ",
-      "last_modified": "2022-01-31T12:36:38-08:00"
+      "contents": "\n\n          \n          \n          244 Term Project\n          \n          \n          Home\n          About\n          Blog\n          ☰\n          \n          \n      \n        \n          \n            Mari Herbst de Cortina\n          \n          \n            \n              I am a student at UC Santa Barbara’s Bren School of Environmental Science & Management pursing a Masters of Environmental Science & Management (MESM). Check out some of my work!\n            \n            \n              I am a student at UC Santa Barbara’s Bren School of Environmental Science & Management pursing a Masters of Environmental Science & Management (MESM). Check out some of my work!\n            \n          \n\n          \n            \n              \n                  \n                    \n                      LinkedIn\n                    \n                  \n                \n                                \n                  \n                    \n                      GitHub\n                    \n                  \n                \n                                \n                  \n                    \n                      Email\n                    \n                  \n                \n                              \n          \n\n          \n            \n              \n                                \n                  \n                    LinkedIn\n                  \n                \n                                \n                  \n                    GitHub\n                  \n                \n                                \n                  \n                    Email\n                  \n                \n                              \n            \n          \n        \n      \n    \n\n    \n    \n    ",
+      "last_modified": "2022-02-02T17:30:47-08:00"
     }
   ],
-  "collections": []
+  "collections": ["posts/posts.json"]
 }

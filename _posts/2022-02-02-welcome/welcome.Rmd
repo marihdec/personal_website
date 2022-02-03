@@ -1,0 +1,20 @@
+---
+title: "Welcome"
+description: |
+  Bloggy blog blog
+author:
+  - name: Mari Herbst de Cortina
+date: 2022-02-02
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+This is my blog! Content coming soon...
+
+

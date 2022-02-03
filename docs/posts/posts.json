@@ -1,0 +1,19 @@
+[
+  {
+    "path": "posts/2022-02-02-welcome/",
+    "title": "Welcome",
+    "description": "Bloggy blog blog",
+    "author": [
+      {
+        "name": "Mari Herbst de Cortina",
+        "url": {}
+      }
+    ],
+    "date": "2022-02-02",
+    "categories": [],
+    "contents": "\nThis is my blog! Content coming soon…\n\n\n\n",
+    "preview": {},
+    "last_modified": "2022-02-02T17:26:13-08:00",
+    "input_file": {}
+  }
+]
