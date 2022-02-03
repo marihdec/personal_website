@@ -38,7 +38,7 @@ html {
 }
 
 body {
-  background-color: pink
+  background-color: #B5E2FA
 }
 
 /*-- ARTICLE METADATA --*/
@@ -71,7 +71,7 @@ d-appendix {
   --text-color:       white; /* edited */
   --text-size:        15px;
   --hover-color:      black; /* edited */
-  --bkgd-color:       palevioletred; /* edited */
+  --bkgd-color:       #3C6997; /* edited */
 }
 
 .distill-site-footer {

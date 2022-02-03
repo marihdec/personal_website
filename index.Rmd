@@ -7,6 +7,8 @@ links:
     url: "https://www.linkedin.com/in/marielena-herbst-de-cortina-b6501a147/"
   - label: GitHub
     url: "https://github.com/marihdec"
+  - label: Profile
+    url: "https://bren.ucsb.edu/people/marielena-mari-herbst-de-cortina"
 output:
   postcards::jolla
 ---
