@@ -1,0 +1,26 @@
+---
+title: "CSR (2020)"
+description: |
+  A blog post I wrote back in 2020 to make myself feel better during the deepest depths of quarantine
+author:
+  - name: Mari Herbst de Cortina
+    url: {}
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+  As 2020 mercilessly marches on, our climate emergency has become more and more evident. With record-breaking wildfires in California and devastating hurricanes along our Eastern and Southern coasts, it’s hard to avoid seeing the effects of climate change each and every day. Although there are important actions we as individuals can take to reduce our personal contributions to our climate crisis (more on that to come in future posts), it is impossible to deny the fact that large scale, systemic change on behalf of corporations is necessary to make a substantial dent in emissions and waste.
+
+  The good news? Corporate social responsibility is in fashion! Single use plastics and fast fashion are out and reusable water bottles and recycled fabrics are in. In fact, data shows that there are extensive benefits for companies that take measures to be socially and environmentally responsible. For one, consumers love it – more than half of respondents to a poll by Accenture aimed at determining why individuals purchase one brand over another answered that brands that espouse ethical values or make concerted efforts to reduce waste are more likely to earn their business ([1](https://www.accenture.com/t20190201T104905Z__w__/us-en/_acnmedia/Thought-Leadership-Assets/PDF/Accenture-CompetitiveAgility-GCPR-POV.pdf)). Plus, there are many more advantages to CSR than just appealing to customers – there are more opportunities to expand, and employees are more satisfied, productive, and likely to stay working at their companies ([2](https://www.globalgiving.org/learn/listicle/csr-facts-you-need-to-know)).
+
+  Bottom line: the tide is turning. People increasingly want to work with and buy from companies that exhibit strong morals and take stands on important issues, and companies can lose clients, customers, and team members when they work with partners who don’t support those issues. That being said, the Harvard Business Review conducted a study that showed that corporate social responsibility only really works if done authentically and for more than just the potential financial benefits – consumers aren’t interested in greenwashing; they want authentic, meaningful action ([3](https://hbr.org/2018/01/stop-talking-about-how-csr-helps-your-bottom-line)).
+
+
+
+
