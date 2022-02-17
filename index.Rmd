@@ -4,7 +4,7 @@ image: "IMG_3375.jpeg"
 site: distill::distill_website
 links:
   - label: LinkedIn
-    url: "https://www.linkedin.com/in/marielena-herbst-de-cortina-b6501a147/"
+    url: "www.linkedin.com/in/marielena-herbst-de-cortina"
   - label: GitHub
     url: "https://github.com/marihdec"
   - label: Profile
