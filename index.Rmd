@@ -1,6 +1,6 @@
 ---
 title: "Mari Herbst de Cortina"
-image: "IMG_3375.jpeg"
+image: "IMG_6616.jpg"
 site: distill::distill_website
 links:
   - label: LinkedIn
