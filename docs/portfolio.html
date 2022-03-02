@@ -89,27 +89,24 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_meta_tags-->
   <title>Mari Herbst de Cortina: Portfolio</title>
 
-  <meta property="description" itemprop="description" content="Check out some of my work!"/>
 
 
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
   <meta property="og:title" content="Mari Herbst de Cortina: Portfolio"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="Check out some of my work!"/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="Mari Herbst de Cortina"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
   <meta property="twitter:title" content="Mari Herbst de Cortina: Portfolio"/>
-  <meta property="twitter:description" content="Check out some of my work!"/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description"]}},"value":[{"type":"character","attributes":{},"value":["Portfolio"]},{"type":"character","attributes":{},"value":["Check out some of my work!"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","listing"]}},"value":[{"type":"character","attributes":{},"value":["Portfolio"]},{"type":"character","attributes":{},"value":["portfolio"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2154,7 +2151,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   }
 
   body {
-    background-color: #D9E8D4
+    background-color: #FEF7F6
   }
 
   /*-- ARTICLE METADATA --*/
@@ -2186,8 +2183,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     --title-size:       18px;    
     --text-color:       white; /* edited */
     --text-size:        15px;
-    --hover-color:      black; /* edited */
-    --bkgd-color:       #426836; /* edited */
+    --hover-color:      #E87E63; /* edited */
+    --bkgd-color:       #EA9D89; /* edited */
   }
 
   .distill-site-footer {
@@ -2381,12 +2378,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 </head>
 
-<body>
+<body class="layout-listing">
 
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Portfolio","description":"Check out some of my work!","authors":[]}
+{"title":"Portfolio","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2409,27 +2406,228 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_navigation_before_body-->
 <!--radix_placeholder_site_before_body-->
 <!--/radix_placeholder_site_before_body-->
+<!--radix_placeholder_article_listing-->
+
+
+<script type="application/javascript">
+
+function init_posts_list() {
+
+  function load_image(img) {
+    var src = $(img).attr('data-src');
+    if (src) {
+      $(img).attr('src', src);
+      $(img).on("load", function() {
+        img.removeAttribute('data-src');
+      });
+    }
+  }
+
+  function set_posts_visible(posts, visible) {
+    if (visible) {
+
+      // show bottom border by default
+      $(posts).removeClass('post-preview-last');
+
+      // apply limits if need be
+      var max_posts = 25;
+      var apply_limits = $('.posts-container').hasClass('posts-apply-limit');
+      if (apply_limits && posts.length > max_posts) {
+        posts = $(posts).slice(0, max_posts);
+      } else {
+        $('.posts-more a').addClass('hidden');
+      }
+
+      // apply last style
+      $(posts.slice(-1)[0]).addClass('post-preview-last');
+
+      $(posts).removeClass('hidden');
+      $(posts).find('img[data-src]').each(function(i, img) {
+        load_image(img);
+      });
+    } else {
+      $(posts).addClass('hidden');
+    }
+  }
+
+  function apply_hash_filter() {
+
+    // clear active state
+    $('.categories .active').removeClass('active');
+
+    // mark all posts invisible to start
+    set_posts_visible($('.posts-list').children('a'), false);
+
+    // if we have a hash filter
+    if (window.location.hash && window.location.hash.startsWith("#category:")) {
+
+      // mark posts that match the category visible
+      var page_category = window.location.hash.replace(/^#category:/, "");
+      page_category = decodeURIComponent(page_category)
+      var posts = $('.post-metadata').map(function(idx, script) {
+        var metadata = $.parseJSON($(script).html());
+        var post = null;
+        $.each(metadata.categories, function(idx, category) {
+          category = category.replace(/ /g,"_");
+          if ((page_category || '').toLowerCase() === "articles" || category === page_category) {
+            post = $(script).parent().get();
+            return false;
+          }
+        });
+        return post;
+      });
+      set_posts_visible(posts, true);
+
+      // mark the hash active
+      $('.categories li>a[href="' + decodeURIComponent(window.location.hash) + '"]').addClass('active');
+
+      // update the list_caption
+      var list_caption = $('.posts-list-caption');
+      var caption = (page_category || '').toLowerCase() === "articles"
+        ? list_caption.attr('data-caption')
+        : ('Category: ' + page_category.replace(/_/g," "));
+      list_caption.text(caption);
+
+    } else {
+
+      // no hash filter, make all posts visible (subject to max display)
+      set_posts_visible($('.posts-list').children(), true);
+
+      // reset list caption
+      var list_caption = $('.posts-list-caption');
+      list_caption.text(list_caption.attr('data-caption'));
+
+
+    }
+  }
+
+  // more articles
+  function apply_post_limits(apply) {
+    if (apply) {
+      $('.posts-container').addClass('posts-apply-limit');
+      $('.posts-more a').removeClass('hidden');
+    } else {
+      $('.posts-container').removeClass('posts-apply-limit');
+      $('.posts-more a').addClass('hidden');
+    }
+  }
+
+  // click handling for tags
+  $('.dt-tag').click(function(ev) {
+    window.location.hash = '#category:' + $(this).text().replace(/ /g, "_");
+    return false;
+  })
+
+  // hash filter handling
+  apply_hash_filter();
+  $(window).on('hashchange',function() {
+    apply_post_limits(true);
+    apply_hash_filter();
+  });
+
+  // more articles link
+  $('.posts-more a').click(function(e) {
+    e.preventDefault();
+    apply_post_limits(false);
+    apply_hash_filter();
+    return false;
+  });
+
+}
+
+</script>
+
+
+
+<div class="posts-container posts-apply-limit l-page">
+<div class="posts-list">
+<h1 class="posts-list-caption" data-caption="Portfolio">Portfolio</h1>
+<a href="portfolio/2022-03-01-hareweight/" class="post-preview">
+<script class="post-metadata" type="text/json">{"categories":[]}</script>
+<div class="metadata">
+<div class="publishedDate">March 1, 2022</div>
+<div class="dt-authors">
+<div class="dt-author">Mari Herbst de Cortina</div>
+</div>
+</div>
+<div class="thumbnail">
+<img src="portfolio/2022-03-01-hareweight/hareweight_files/figure-html5/unnamed-chunk-5-1.png"/>
+</div>
+<div class="description">
+<h2>Linear Regression of Hare Weights by Hind Foot Length</h2>
+<div class="dt-tags"></div>
+<p>An analysis of the viability of hind foot length as a predictor for weight in juvenile hares.</p>
+</div>
+</a>
+<a href="portfolio/2022-03-01-monolake/" class="post-preview">
+<script class="post-metadata" type="text/json">{"categories":[]}</script>
+<div class="metadata">
+<div class="publishedDate">March 1, 2022</div>
+<div class="dt-authors">
+<div class="dt-author">Mari Herbst de Cortina</div>
+</div>
+</div>
+<div class="thumbnail">
+<img src="portfolio/2022-03-01-monolake/monolake_files/figure-html5/unnamed-chunk-3-1.png"/>
+</div>
+<div class="description">
+<h2>Mono Lake Water Levels</h2>
+<div class="dt-tags"></div>
+<p>Visualization of Mono Lake water levels with significant historical events.</p>
+</div>
+</a>
+<a href="portfolio/2022-03-01-pcausda/" class="post-preview">
+<script class="post-metadata" type="text/json">{"categories":[]}</script>
+<div class="metadata">
+<div class="publishedDate">March 1, 2022</div>
+<div class="dt-authors">
+<div class="dt-author">Mari Herbst de Cortina</div>
+</div>
+</div>
+<div class="thumbnail">
+<img src="portfolio/2022-03-01-pcausda/pcausda_files/figure-html5/unnamed-chunk-6-1.png"/>
+</div>
+<div class="description">
+<h2>Dairy Product Nutrient PCA</h2>
+<div class="dt-tags"></div>
+<p>A principal components analysis to determine if there is a correlation between nutritional indices for dairy products.</p>
+</div>
+</a>
+<a href="portfolio/2022-03-01-clusters/" class="post-preview">
+<script class="post-metadata" type="text/json">{"categories":[]}</script>
+<div class="metadata">
+<div class="publishedDate">March 1, 2022</div>
+<div class="dt-authors">
+<div class="dt-author">Mari Herbst de Cortina</div>
+</div>
+</div>
+<div class="thumbnail">
+<img src="portfolio/2022-03-01-clusters/clusters_files/figure-html5/unnamed-chunk-5-1.png"/>
+</div>
+<div class="description">
+<h2>Linkages Between Stream Chemistries</h2>
+<div class="dt-tags"></div>
+<p>An agglomerative heirarchical clustering (via complete linkage) of stream chemistries at the Santa Barbara Coastal LTER.</p>
+</div>
+</a>
+</div>
+<div class="posts-more">
+<a href="#">More articles &raquo;</a>
+</div>
+</div>
+<!--/radix_placeholder_article_listing-->
 
 <div class="d-title">
 <h1>Portfolio</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Check out some of my work!</p></p>
+
 </div>
 
 
 <div class="d-article">
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<p><img src="portfolio_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></p>
-</div>
-<p><em>Figure 1</em>: Mono Lake Annual Levels. Annual levels of Mono Lake from 1850 to 2017 in terms of feet above sea level. Since the 1940s, Los Angeles’s Department of Water &amp; Power has been diverting water away from Mono Lake in order to meet the city’s water demands. A study in the 1970s revealed that reducing the level and volume of the lake was resulting in ecological damage affecting the native wildlife including California Gulls, Eared Grebes, Osprey, and Brine Shrimp, among many others. The students who conducted the study founded the Mono Lake Committee (MLC) with the goal of saving this ecosystem and have been recording and reporting on the lake’s conditions ever since. In the 2017 Mono Basin Stream Restoration Agreement (MBSRA) was approved, but has not yet implemented by DWP. The green line indicates the lake level that the CA State Water Board mandated must be maintained for the lake to be stable (6,392 feet). The yellow line indicates the level at which land bridges emerge that allow coyotes to prey on nesting birds (6,377 feet above sea level). The orange line indicates the level at which salinity is high enough to reduce brine shrimp populations that many native birds rely on (120 g/L at 6,360 feet above sea level). Point labels indicate significant historical events affecting Mono Lake.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
