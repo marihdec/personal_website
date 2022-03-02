@@ -38,7 +38,7 @@ html {
 }
 
 body {
-  background-color: #D9E8D4
+  background-color: #FEF7F6
 }
 
 /*-- ARTICLE METADATA --*/
@@ -70,8 +70,8 @@ d-appendix {
   --title-size:       18px;    
   --text-color:       white; /* edited */
   --text-size:        15px;
-  --hover-color:      black; /* edited */
-  --bkgd-color:       #426836; /* edited */
+  --hover-color:      #E87E63; /* edited */
+  --bkgd-color:       #EA9D89; /* edited */
 }
 
 .distill-site-footer {

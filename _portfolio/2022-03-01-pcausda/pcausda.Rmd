@@ -1,0 +1,131 @@
+---
+title: "Dairy Product Nutrient PCA"
+description: |
+  A principal components analysis to determine if there is a correlation between nutritional indices for dairy products.
+author:
+  - name: Mari Herbst de Cortina
+    url: {}
+date: 2022-03-01
+output:
+  distill::distill_article:
+    self_contained: false
+    code_folding: Click to show code
+---
+
+```{r setup, include=TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+# attach packages
+library(tidyverse)
+library(here)
+library(janitor)
+library(ggfortify)
+```
+
+### Introduction
+
+In this report I will explore whether there is correlation between nutritional indices for dairy products. The data comes from USDA's National Nutritional Database. I will use Principle Components Analysis to investigate how the energy (kcal), protein (g), fat (g), carbs (g), sugar (g), and fiber (g) content of these dairy products relate to each other. I will use the PC analysis to create a biplot that demonstrates magnitude and direction of correspondence between nutritional indices as well as a screeplot that shows the amount of variance explained by each principle component.
+
+### Principal Components Analysis
+
+```{r}
+# read in data using here to create a system agnostic file path
+usda_nutrients <- read_csv(here("data", "usda_nutrients.csv"))
+```
+
+```{r}
+# create a function to indicate NOT in
+"%!in%" <- Negate("%in%")
+```
+
+```{r}
+# wrangle data
+usda_dairy <- usda_nutrients %>%
+  janitor::clean_names() %>% # make column names easier to work with
+  filter(food_group == "Dairy and Egg Products") %>% # select only dairy and egg data
+  drop_na(descrip, energy_kcal, protein_g, fat_g, carb_g, sugar_g, fiber_g) %>% # drop NA values in columns that will be analyzed
+  separate(col = descrip, # separate the column descrip
+           into = c("category", "details"), # into two columns
+           sep = ",", # separate at the first comma
+           extra = "merge", # if there are multiple, merge them into the second column
+           remove = TRUE) %>% # remove original column "descrip"
+  mutate(category = ifelse(str_detect(category, "KRAFT"), "Kraft", category)) %>% # replace category observations that contain the brand name Kraft with just "Kraft"
+  mutate(category = ifelse(str_detect(category, "Cheese"), "Cheese", category)) %>% # replace observations that contain the word cheese with simply "Cheese"
+  mutate(category = ifelse(str_detect(category, "Cream"), "Cream", category)) %>% # same for cream with "cream"
+  mutate(category = ifelse(str_detect(category, "Queso"), "Cheese", category)) %>% # and queso with "cheese"
+  mutate(category = ifelse(str_detect(category, "Parmesan cheese topping"), "Cheese", category)) %>% # and Parmesan topping with "cheese"
+  mutate(category = ifelse(str_detect(category, "Ice cream"), "Ice cream", category)) %>% # and ice cream with "ice cream"
+  filter(category %!in% c("Eggs", "Egg substitute", "Egg", "Egg Mix", "Protein supplement", "Sour dressing", "USDA Commodity", "Nutritional supplement for people with diabetes", "Reddi Wip Fat Free Whipped Topping")) %>% # remove observations from some categories
+  select(-(id:short_descrip), -(vit_a_mcg:zinc_usrda), -(details:scientific_name)) # remove irrelevant columns
+```
+
+```{r}
+# rename column names for graph finalization
+colnames(usda_dairy) <- c("category", "energy (kcal)", "protein (g)", "fat (g)", "carbs (g)", "sugar (g)", "fiber (g)")
+```
+
+```{r}
+# run a PCA on the data
+dairy_pca <- usda_dairy %>%
+  select(-category) %>% # remove columns that won't be included in analysis
+  scale() %>% # scale the data so that values are comparable
+  prcomp()
+```
+
+#### Biplot
+
+```{r}
+autoplot(dairy_pca,
+         data = usda_dairy,
+         loadings = TRUE, # arrows
+         colour = "category",
+         loadings.label = TRUE, # label arrows
+         loadings.colour = "black", # change arrow color
+         loadings.label.colour = "black", # change arrow label color
+         loadings.label.vjust = -0.5) + # adjust arrow label position
+  labs(title = "Principle Component Analysis of Health Indices for Dairy Products") + # add figure title
+  theme_minimal() # add theme
+```
+
+**Figure 1**: A principle component analysis of nutritional indices of dairy products as recorded by the USDA. Arrows indicate the magnitude and direction of each factors' influence on the principle components. Arrows that are close together indicate a strong correlation between the indices; right angles between arrows indicate the indices are not correlated.
+
+#### Screeplot
+
+```{r}
+sd_vec <- dairy_pca$sdev # extract standard deviations into a vector
+
+var_vec <- sd_vec^2 # calculate variance from SD
+
+pc_names <- colnames(dairy_pca$rotation) # quickly get column names from pca object
+
+pct_explained_df <- data.frame(v = var_vec, # put vectors into a df as column values
+                               pct_v = var_vec/sum(var_vec), # calculate percentages of variance by PC
+                               pc = fct_inorder(pc_names)) %>% # order the percentages
+  mutate(pct_lbl = paste0(round(pct_v * 100, 1),"%")) # paste0 makes it so there are no spaces between the value and the percent sign
+
+ggplot(data = pct_explained_df,
+       aes(x = pc, y = v)) +
+  geom_col(fill= "cornflowerblue") + # add color
+  geom_text(aes(label = pct_lbl), vjust = 0, nudge_y = 0.005) + # add labels with % variance explained by each one
+  labs(x = "Principal component", y = "Variance explained",
+       title = "Screeplot of level of variance explained by each principle component")
+```
+
+
+**Figure 2**: This screeplot shows the variance that is accounted for by each principle component from the PCA of the USDA dairy data. The combined variance shown combines to 100%, with each descending principle components explaining a lower amount of variance than the principle component before it.
+
+### Conclusions
+
+The PC1 and PC2 principle components only account for around 70% of the variance in this data, so much of the variance in this nutritional data is still not accounted for. Based on the screeplot, we can see that it might be worthwhile to add PC3 into this analysis to explain a larger percentage of the variance. However, the information we have from PC1 and PC2 indicates that:
+
+- Carbs and sugar content are highly positively correlated.
+
+- Carbs and sugar content are not correlated with fat content.
+
+- Fiber content and energy content are not correlated.
+
+- Protein, fat, and energy content are somewhat positively correlated.
+
+### Data Citation
+
+U.S. Department of Agriculture, Agricultural Research Service. FoodData Central, 2019. fdc.nal.usda.gov.

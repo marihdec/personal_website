@@ -1,0 +1,89 @@
+---
+title: "Mono Lake Water Levels"
+description: |
+  Visualization of Mono Lake water levels with significant historical events.
+author:
+  - name: Mari Herbst de Cortina
+    url: {}
+date: 2022-03-01
+output:
+  distill::distill_article:
+    self_contained: false
+    code_folding: Click to show code
+---
+
+### Introduction
+
+This report explores Mono Lake annual water levels from 1850 to 2017 in terms of feet above sea level. Since the 1940s, Los Angeles's Department of Water & Power has been diverting water away from Mono Lake in order to meet the city's water demands. A study in the 1970s revealed that reducing the level and volume of the lake was resulting in ecological damage affecting the native wildlife including California Gulls, Eared Grebes, Osprey, and Brine Shrimp, among many others. The students who conducted the study founded the Mono Lake Committee (MLC) with the goal of saving this ecosystem and have been recording and reporting on the lake's conditions ever since.
+
+### Visualization
+
+```{r setup, include=TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+# attach packages
+library(tidyverse)
+library(here)
+library(janitor)
+library(plotly)
+library(ggrepel)
+```
+
+```{r}
+# read in data using here() to create a system agnostic file path
+
+mono_lake <- read_csv(here("data", "mono_lake_annual_levels.csv"), skip = 5) %>% # use skip to begin the table at a different row than row 1
+  clean_names() # make column names coder friendly
+```
+
+```{r}
+mono_history <- mono_lake %>% # create a dataframe with years of historical events
+  filter(year %in% c(1941, 1976, 1978, 1994, 2013)) %>% # filter for relevant years
+  mutate(significance = c("diversion begins", "initial ecological study", "MLC founded", "stability level est.", "MBSRA approved")) # add column to attribute historical significance
+```
+
+```{r}
+ggplot(data = mono_lake, aes(x = year, y = lake_level_feet_above_sea_level)) + # create a plot using the complete mono_lake data
+  geom_line(color = "deepskyblue2", size = 1) + # make it a blue line graph
+  labs(y = "feet above sea level", # label axes and title
+       title = "Mono Lake Annual Levels",
+       caption = "data courtesy of Mono Basin Clearinghouse") +
+  geom_hline(yintercept = 6392, color = "darkolivegreen4", alpha = 0.7) + # add horizontal lines for significant lake levels
+  geom_hline(yintercept = 6377, color = "goldenrod1", alpha = 0.7) +
+  geom_hline(yintercept = 6360, color = "coral1", alpha = 0.7) +
+  geom_point(data = mono_history, # create overlapping plot with mono_history data frame
+             aes (x = year, y = lake_level_feet_above_sea_level), # assign x and y variables
+             color = "darkorchid1", size = 1.25) + # add color and change size of points
+  theme(plot.title = element_text(hjust = 0.5)) + # add a plot title and center it
+  annotate("text", # add label for horizontal lines of significant levels
+           y = 6390, # dictate location
+           x = 1862,
+           size = 3, # dictate size
+           label = "stable lake level", # label the line
+           color = "darkolivegreen4") + # add color
+  annotate("text", # do same as above for each line
+           y = 6375,
+           x = 1865.8,
+           size = 3,
+           label = "land bridge emerges",
+           color = "goldenrod1") +
+  annotate("text", # do same as above for each line
+           y = 6358,
+           x = 1875,
+           size = 3,
+           label = "salinity impedes brine shrimp pop",
+           color = "coral1") +
+  geom_label_repel(data = mono_history, # add labels to the years of historical significance
+                   aes(x = year, y = lake_level_feet_above_sea_level, # indicate x and y variables
+                       label = significance), # label the points according to the significance column
+                   box.padding = 1, # box. and point.padding adjust position and size of labels
+                   point.padding = 0.1) +
+  scale_x_continuous(limits = c(1850, 2017), # adjust x axis scale to be from 1850 to 2020
+                     breaks = seq(1850, 2020, 10), # breaks every 10 years
+                     expand = c(0, 0)) + # remove buffer zone
+  scale_y_continuous(limits = c(6350, 6430), # adjust y axis scale to be from 6350 to 6430
+                     breaks = seq(6350, 6430, 20), # breaks every 20 feet
+                     expand = c(0, 0)) # remove buffer zone
+```
+
+**Figure 1**: Annual levels of Mono Lake from 1850 to 2017 in terms of feet above sea level. In the 2017 Mono Basin Stream Restoration Agreement (MBSRA) was approved, but has not yet implemented by DWP. The green line indicates the lake level that the CA State Water Board mandated must be maintained for the lake to be stable (6,392 feet). The yellow line indicates the level at which land bridges emerge that allow coyotes to prey on nesting birds (6,377 feet above sea level). The orange line indicates the level at which salinity is high enough to reduce brine shrimp populations that many native birds rely on (120 g/L at 6,360 feet above sea level). Point labels indicate significant historical events affecting Mono Lake.

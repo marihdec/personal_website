@@ -1,0 +1,100 @@
+---
+title: "Linkages Between Stream Chemistries"
+description: |
+  An agglomerative heirarchical clustering (via complete linkage) of stream chemistries at the Santa Barbara Coastal LTER.
+author:
+  - name: Mari Herbst de Cortina
+    url: {}
+date: 2022-03-01
+output:
+  distill::distill_article:
+    self_contained: false
+    code_folding: Click to show code
+---
+
+```{r setup, include=TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+# attach packages
+library(tidyverse)
+library(here)
+library(ggdendro)
+library(naniar)
+library(janitor)
+```
+
+### Introduction
+
+In this report I will explore multivariate linkages between water chemistry of streams in the Santa Barbara Coastal LTER. I will use complete linkage analysis to identify clusters among the streams based on the average values of 9 variables: ammonium (uM/L), nitrate (uM/L), phosphate (uM/L), total dissolved nitrogen (um/L), total dissolved phosphorus (uM/L), total particulate carbon (uM/L), total particulate nitrogen (uM/L), total particulate phosphorus (uM/L), total suspended solids (mg/L), and specific conductivity (measured at 25C in sS/cm).
+
+### Complete Agglomerative Heirarchical Clustering
+
+```{r}
+# read in data using here to create a system agnostic file path
+stream <- read_csv(here("data", "sbc_lter_registered_stream_chemistry.csv")) %>%
+  clean_names() %>% # clean up column names
+  replace_with_na_all(condition = ~.x == -999) # change -999 values to NA
+```
+
+```{r}
+# create a subset with summarized values per site
+stream_site <- stream %>%
+  group_by(site_code) %>%
+  summarize(mean_nh4_um = mean(nh4_u_m, na.rm = TRUE), # summarize by the mean value across observations at each site
+            mean_no3_um = mean(no3_u_m, na.rm = TRUE),
+            mean_po4_um = mean(po4_u_m, na.rm = TRUE),
+            mean_tdn_um = mean(tdn_u_m, na.rm = TRUE),
+            mean_tdp_um = mean(tdp_u_m, na.rm = TRUE),
+            mean_tpc_um = mean(tpc_u_m, na.rm = TRUE),
+            mean_tpn_um = mean(tpn_u_m, na.rm = TRUE),
+            tss_mgper_liter = mean(tss_mgper_liter, na.rm = TRUE),
+            spec_cond_u_spercm = mean(tss_mgper_liter, na.rm = TRUE)) %>%
+  drop_na() # drop sites that have NA values
+```
+
+```{r}
+site_scaled <- stream_site %>%
+  select(-site_code) %>% # remove site code column because we don't want to include those values in the analysis
+  scale()
+
+rownames(site_scaled) <- stream_site$site_code # add stream site codes back to scaled data as row names
+```
+
+```{r}
+# find euclidean distance using scaled data
+site_dist <- dist(site_scaled,
+                  method = "euclidean")
+
+# hierarchical clustering (complete linkage)
+site_hc_comp <- hclust(site_dist,
+                       method = "complete")
+```
+
+#### Dendrogram
+
+```{r}
+# save the hierarchical clustering as a dendrogram
+site_dend <- as.dendrogram(site_hc_comp)
+
+# visualize
+ggdendrogram(site_dend,
+             rotate = TRUE) +
+  theme_minimal() +
+  labs(x = "site ID",
+       y = "distance",
+       title = "Complete Linkage Dendrogram for Stream Site Chemistry at SBC LTER")
+```
+
+**Figure 1**: Complete linkage analysis of clusters between chemistry at streams in the Santa Barbara Coastal LTER. Cluster distance indicates the smallest maximum Euclidean distance between points in the cluster.
+
+### Conclusions
+
+According to the complete linkage dendrogram:
+
+- Stream ON02 is the most unlike the other streams
+
+- MC00 and AB00 are the most similar in their stream chemistry as demonstrated by the short distance between their linkage
+
+### Data Citation
+
+Santa Barbara Coastal LTER and J. Melack. 2019. SBC LTER: Land: Stream chemistry in the Santa Barbara Coastal drainage area, ongoing since 2000 ver 16. Environmental Data Initiative. https://doi.org/10.6073/pasta/67a558a24ceed9a0a5bf5e46ab841174. 

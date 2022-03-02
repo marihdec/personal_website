@@ -1,0 +1,115 @@
+---
+title: "Linear Regression of Hare Weights by Hind Foot Length"
+description: |
+  An analysis of the viability of hind foot length as a predictor for weight in juvenile hares.
+author:
+  - name: Mari Herbst de Cortina
+    url: {}
+date: 2022-03-01
+output:
+  distill::distill_article:
+    self_contained: false
+    code_folding: Click here to show code
+---
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(here)
+library(lubridate)
+library(kableExtra)
+library(effsize)
+library(modelsummary)
+```
+
+### Introduction
+
+This report explores data collected about snowshoe hares across sites in the Bonanza Creek LTER between 1998 and 2012 (Kielland et al. (2017). The report investigates whether there is a linear relationship between juvenile hare weights and hind foot length.
+
+Snowshoe hares in the Bonanza Creek LTER in Alaska were trapped and measured over the course of 14 years (1998-2012). The hares were observed at three locations -- the Bonanza Riparian zone, the Bonanza Black Spruce zone, and the Bonanza Mature zone, representing three different landscapes in the region. The hares were measured for sex (male, female, NA), age (adult, juvenile, NA), weight (g), and hind foot length (mm).
+
+This report visualizes the relationship between weight and hind foot length in juvenile hares. A simple linear regression is used to explore the potential relationship between hind foot length and weight. All analyses are in R version 4.1.1 using RStudio version 1.4.1717.
+
+### Visualization and Regression Model
+
+```{r, message = FALSE, warning = FALSE}
+# Read in the data using here() to create a system agnostic file path.
+bonanza_hares <- read_csv(here("data", "bonanza_hares.csv"))
+```
+
+```{r, message = FALSE, warning = FALSE}
+# Change labels to make data easier to understand once visualized
+bonanza_clean <- bonanza_hares %>%
+  filter(age == "j") %>% # filter for juvenile hares
+  mutate(sex = case_when( # when sex =
+         sex == "m" ~ "male", # "m" change to "male"
+         sex == "f" ~ "female",
+         TRUE ~ "unknown")) %>%
+  mutate(grid = case_when( # when grid =
+         grid == "bonbs" ~ "Bonanza Black Spruce", # "bonbs" change to "Bonanza Black Spruce"
+         grid == "bonrip" ~ "Bonanza Riparian",
+         grid == "bonmat" ~ "Bonanza Mature"))
+```
+
+```{r, include = FALSE, message = FALSE, warning = FALSE}
+# explore the linearity of hare weights/hind feet length relationship
+hare_model <- lm(weight ~ hindft, data = bonanza_clean)
+
+# call the model:
+hare_model
+
+# get more information about the model
+summary(hare_model)
+
+# create a tidy table of the model
+hare_model_coeff <- tidy(hare_model)
+
+# explore the coefficient of correlation for hare weight and hind foot length, Pearson's r
+hare_pearsonr <- cor.test(bonanza_clean$weight, bonanza_clean$hindft)
+
+# explore scedasticity
+plot(hare_model)
+```
+
+```{r, message = FALSE, warning = FALSE}
+# create a data frame for only juvenile males and females
+hares_j_m_f <- bonanza_clean %>% # start with bonanza_clean
+  filter(sex == "male" | sex == "female") # filter for observations where sex is male or female
+
+# Create a table of summary statistics for hare weights
+weight_summary_stats <- hares_j_m_f %>%
+  group_by(sex) %>%
+  summarize(mean_weight = round(mean(weight, na.rm = TRUE), 2), # summarize and name columns, 'na.rm = TRUE' to remove NA values, round() to choose number of digits
+            median_weight = median(weight, na.rm = TRUE), 
+            sd_weight = round(sd(weight, na.rm = TRUE), 2),
+            sample_size = n())
+```
+
+```{r, message = FALSE, warning = FALSE}
+ggplot(data = bonanza_clean, aes(x = hindft, y = weight)) +
+  geom_point(color = "deeppink3") +
+  theme_minimal() +
+  theme(text = element_text(family = "Calibri", # change the font and bold for easier reading
+                            face = "bold"),
+        plot.title = element_text(hjust = 0.5)) +  # center plot title
+  labs(x = "hind foot length (mm)", # name axes and title
+       y ="weight (g)",
+       title = "Juvenile Hare Weight by Hind Foot Length") +
+  geom_smooth(method = "lm", color = "lightslateblue") # add regression line
+```
+
+**Figure 1**: Juvenile Hare Weight by Hind Foot Length: An exploration of the trends of `r sum(weight_summary_stats$sample_size)` snowshoe hares' weights (g) relative to their hind foot lengths (mm). Linear regression line included ($\beta$~1~ = `r round(hare_model_coeff$estimate[2], 2)` $\frac{g}{mm}$, Pearson's r: `r round(hare_pearsonr$estimate, 2)`, R$^2$ = `r round(summary(hare_model)$r.squared, 3)`).
+
+### Conclusions
+
+Based on this model, we would expect an average increase in hare body weight of `r round(hare_model_coeff$estimate[2], 2)`g per 1mm increase in hind foot length. The model also indicates that hind foot length is predictive of `r round(summary(hare_model)$r.squared * 100, 2)`% of variance in snowshoe hare weights. There is moderate positive correlation between hare hind foot length and weight (Pearson's r: `r round(hare_pearsonr$estimate, 2)`). I have some concerns about making the assumption that this data set can be described by a linear regression. The R$^2$ value and Pearson's r demonstrate that there is some correlation between hind foot length and weight, but not a strong correlation enough correlation to explain all variance in weights. Further, the data appears to demonstrate heteroscedasticity rather than homoscedasticity, indicating there is not constant variance in the errors of observations.
+
+
+Juvenile hare weight and hind foot length are loosely correlated, but there is not enough correlation to explain the full variance in weights. Also, there are concerns about using a linear regression model for this data because the assumptions for linear regression are not met.
+
+### Data citation
+
+Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
+
+
