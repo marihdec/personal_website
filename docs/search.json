@@ -33,8 +33,8 @@
       "path": "resume.html",
       "title": "Resume",
       "author": [],
-      "contents": "\n\nCLick here for a PDF \n\n\n\n",
-      "last_modified": "2022-03-01T20:44:25-08:00"
+      "contents": "\n\nClick here for a PDF \n\n\n\n",
+      "last_modified": "2022-03-01T20:52:28-08:00"
     }
   ],
   "collections": ["posts/posts.json", "portfolio/portfolio.json"]
